@@ -7,6 +7,15 @@
   "module": "dist/index.js",
   "main": "dist/index.cjs.js",
   "types": "dist/index.d.ts",
+  "keywords": [
+    "react",
+    "web component",
+    "reactify",
+    "componentize",
+    "react properties",
+    "react event handler",
+    "react attributes"
+  ],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepack": "npm run build",
