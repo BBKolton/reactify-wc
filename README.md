@@ -6,7 +6,7 @@ Use web components with React properties and functions
 
 # Usage
 
-```javascript
+```jsx
 import React from "react";
 import reactifyWc from "reactify-wc";
 
@@ -21,6 +21,8 @@ export const MyReactComponent = () => (
   <>
     <h1>Hello world</h1>
     <VaadinButton onClick={onClick}>
+      Click me!
+    </VaadinButton>
   </>
 )
 
@@ -54,13 +56,13 @@ companions by name. You can target kebab-cased custom events in the same way,
 like `onMy-kebab-event` -> `my-kebab-event`. `function` properties that do not
 start with `on[A-Z]` are added as props. Observe the example below:
 
-```javascript
+```jsx
 const Example = () => (
-  <VaadinButton onClick={handleClick} />
+  <VaadinButton onClick={handleClick}>Click</VaadinButton>
   // calls addEventListener('click', handleClick)
   // The 'on' prefix is truncated, and the next char lowercased
 
-  <VaadinButton functionalProp={functionalProp} />
+  <VaadinButton functionalProp={functionalProp}>Click</VaadinButton>
   // adds a prop 'functionalProp' -> functionalProp
 )
 
@@ -78,7 +80,7 @@ and components that have direct React integration need to be reactified. For
 readability and ease of use, we recommend reactifying all web components if
 possible.
 
-```javascript
+```jsx
 // Preferred method
 
 const VaadinGrid = reactifyWc("vaadin-grid");
@@ -92,7 +94,7 @@ const MyReactComponent = () => (
 );
 ```
 
-```javascript
+```jsx
 // Will work, not preferred
 
 const VaadinGrid = reactifyWc("vaadin-grid");
@@ -105,7 +107,7 @@ const MyReactComponent = () => (
 );
 ```
 
-```javascript
+```jsx
 // Will work, not preferred
 
 const VaadinGrid = reactifyWc("vaadin-grid");
@@ -123,7 +125,7 @@ const MyReactComponent = () => (
 
 You can mix and match your reactified web components and React components:
 
-```javascript
+```jsx
 const WriteNames = ({ names }) => names.map(name => <p>{name}</p>);
 const ReactifiedWc = reactifyWc("web-comp");
 
