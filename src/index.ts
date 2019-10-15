@@ -12,7 +12,7 @@ const reactifyWebComponent = (WC: string) => {
       this.ref = createRef<HTMLElement>();
     }
 
-    componentDidUpdate() {
+    update() {
       this.clearEventHandlers();
       Object.entries(this.props).forEach(([prop, val]) => {
         if (prop === "children") {
@@ -35,6 +35,14 @@ const reactifyWebComponent = (WC: string) => {
         this.ref.current[prop] = val;
         return undefined;
       });
+    }
+
+    componentDidUpdate() {
+      this.update();
+    }
+
+    componentDidMount() {
+      this.update();
     }
 
     componentWillUnmount() {

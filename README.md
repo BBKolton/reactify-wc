@@ -13,19 +13,16 @@ import reactifyWc from "reactify-wc";
 // Import your web component. This one defines a tag called 'vaadin-button'
 import "@vaadin/vaadin-button";
 
-const onClick = () => console.log('hello world');
+const onClick = () => console.log("hello world");
 
 const VaadinButton = reactifyWc("vaadin-button");
 
 export const MyReactComponent = () => (
   <>
     <h1>Hello world</h1>
-    <VaadinButton onClick={onClick}>
-      Click me!
-    </VaadinButton>
+    <VaadinButton onClick={onClick}>Click me!</VaadinButton>
   </>
-)
-
+);
 ```
 
 # Children, Props, Attributes, Functions, and Events
@@ -142,6 +139,11 @@ const MyComponent = () => (
 
 Contribute to the project in our git repo by opening a PR with changes. We have
 no official contribution guide yet.
+
+# Roadmap
+
+- Do some deep comparison between the changing props, attributes, and especially
+  event handlers so that we aren't setting and removing them on every `componentDidUpdate`.
 
 # Credits
 
