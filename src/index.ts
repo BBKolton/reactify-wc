@@ -18,6 +18,9 @@ const reactifyWebComponent = (WC: string) => {
         if (prop === "children") {
           return undefined;
         }
+        if (prop.toLowerCase() === "classname") {
+          return (this.ref.className = val);
+        }
         if (typeof val === "function" && prop.match(/^on[A-Z]/)) {
           const event = prop[2].toLowerCase() + prop.substr(3);
           this.eventHandlers.push([event, val]);
