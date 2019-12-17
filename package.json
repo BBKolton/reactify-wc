@@ -1,7 +1,7 @@
 {
   "name": "reactify-wc",
   "author": "Bryce Kolton (624), Mercedes-Benz R&D North America, Seattle HUB",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "license": "MIT",
   "description": "Wraps web components in React to allow usage and correct property passthrough",
   "module": "dist/index.js",
