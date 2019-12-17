@@ -27,12 +27,15 @@ const reactifyWebComponent = (WC: string) => {
           return this.ref.current.addEventListener(event, val);
         }
         if (typeof val === "string" || typeof val === "number") {
+          this.ref.current[prop] = val;
           return this.ref.current.setAttribute(prop, val);
         }
         if (typeof val === "boolean") {
           if (val) {
+            this.ref.current[prop] = true;
             return this.ref.current.setAttribute(prop, val);
           }
+          delete this.ref.current[prop];
           return this.ref.current.removeAttribute(prop);
         }
         this.ref.current[prop] = val;
