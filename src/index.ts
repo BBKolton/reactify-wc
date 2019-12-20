@@ -19,21 +19,21 @@ const reactifyWebComponent = (WC: string) => {
           return undefined;
         }
         if (prop.toLowerCase() === "classname") {
-          return (this.ref.current.className = val);
+          return (this.ref.current.className = val as string);
         }
         if (typeof val === "function" && prop.match(/^on[A-Z]/)) {
           const event = prop[2].toLowerCase() + prop.substr(3);
           this.eventHandlers.push([event, val]);
-          return this.ref.current.addEventListener(event, val);
+          return this.ref.current.addEventListener(event, val as EventListener);
         }
         if (typeof val === "string" || typeof val === "number") {
           this.ref.current[prop] = val;
-          return this.ref.current.setAttribute(prop, val);
+          return this.ref.current.setAttribute(prop, String(val));
         }
         if (typeof val === "boolean") {
           if (val) {
             this.ref.current[prop] = true;
-            return this.ref.current.setAttribute(prop, val);
+            return this.ref.current.setAttribute(prop, String(val));
           }
           delete this.ref.current[prop];
           return this.ref.current.removeAttribute(prop);
@@ -57,7 +57,7 @@ const reactifyWebComponent = (WC: string) => {
 
     clearEventHandlers() {
       this.eventHandlers.forEach(([event, handler]) => {
-        this.ref.current.removeEventListener(event, handler);
+        this.ref.current.removeEventListener(event, handler as EventListener);
       });
       this.eventHandlers = [];
     }
