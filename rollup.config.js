@@ -1,5 +1,5 @@
 import ts from "rollup-plugin-typescript2";
-import cjs from "rollup-plugin-commonjs";
+import cjs from "@rollup/plugin-commonjs";
 import pkg from "./package.json";
 import { terser } from "rollup-plugin-terser";
 
