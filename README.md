@@ -142,8 +142,9 @@ no official contribution guide yet.
 
 # Roadmap
 
-- Do some deep comparison between the changing props, attributes, and especially
-  event handlers so that we aren't setting and removing them on every `componentDidUpdate`.
+1. Add testing suite with Cypress.
+2. Do some deep comparison between the changing props, attributes, and especially
+   event handlers so that we aren't setting and removing them on every `componentDidUpdate`.
 
 # Credits
 
