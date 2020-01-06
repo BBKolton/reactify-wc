@@ -17,8 +17,8 @@
     "react attributes"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "prepack": "npm run build",
+    "test": "yarn run build; concurrently -k -n serve,cypress \"serve cypress\" \"yarn cypress run\"",
+    "prepack": "yarn run build",
     "build": "rollup -c"
   },
   "peerDependencies": {
@@ -26,10 +26,15 @@
   },
   "devDependencies": {
     "@types/react": "^16.9.17",
-    "react": "^16.9.0",
+    "babel-standalone": "^6.26.0",
+    "concurrently": "^5.0.2",
+    "cypress": "^3.8.1",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
     "rollup": "^1.12.0",
     "rollup-plugin-terser": "^5.1.3",
     "rollup-plugin-typescript2": "^0.23.0",
+    "serve": "^11.3.0",
     "typescript": "^3.5.3"
   },
   "files": [

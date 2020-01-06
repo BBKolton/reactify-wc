@@ -1,0 +1,35 @@
+<head>
+  <script src="../node_modules/babel-standalone/babel.js"></script>
+  <script src="../node_modules/react/umd/react.development.js"></script>
+  <script src="../node_modules/react-dom/umd/react-dom.development.js"></script>
+  <script src="../dist/index.js" type="module"></script>
+</head>
+
+<body>
+  <div class="root"></div>
+</body>
+
+<script type="text/babel">
+  import Reactify from "../dist/index.js";
+
+  class WebComponent extends HTMLElement {
+    constructor() {
+      super();
+      const shadow = this.attachShadow();
+
+      const div = document.createElement("div");
+      div.classList.add("button-wrapper");
+
+      const button = document.createElement("button");
+      div.appendChild(button);
+    }
+  }
+
+  customElements.define("web-component", WebComponent);
+
+  const ReactifiedWC = Reactify();
+  const Root = () => {};
+
+  const root = document.querySelector(".root");
+  ReactDOM.render(Root, root);
+</script>

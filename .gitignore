@@ -2,3 +2,4 @@ node_modules/
 .rpt2_cache/
 dist/
 yarn-error.log
+cypress/videos
