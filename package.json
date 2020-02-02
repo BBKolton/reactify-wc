@@ -22,7 +22,7 @@
     "build": "rollup -c"
   },
   "peerDependencies": {
-    "react": "^16.9.0"
+    "react": "^16.3.0"
   },
   "devDependencies": {
     "@types/react": "^16.9.17",
