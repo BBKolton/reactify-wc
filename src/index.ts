@@ -26,6 +26,11 @@ const reactifyWebComponent = (WC: string) => {
           this.eventHandlers.push([event, val]);
           return this.ref.current.addEventListener(event, val as EventListener);
         }
+        if (typeof val === "function" && prop.match(/^on\-[a-z]/)) {
+          const event = prop.substr(3);
+          this.eventHandlers.push([event, val]);
+          return this.ref.current.addEventListener(event, val as EventListener);
+        }
         if (typeof val === "string" || typeof val === "number") {
           this.ref.current[prop] = val;
           return this.ref.current.setAttribute(prop, val as string);
@@ -33,7 +38,10 @@ const reactifyWebComponent = (WC: string) => {
         if (typeof val === "boolean") {
           if (val) {
             this.ref.current[prop] = true;
-            return this.ref.current.setAttribute(prop, val as unknown as string);
+            return this.ref.current.setAttribute(
+              prop,
+              (val as unknown) as string
+            );
           }
           delete this.ref.current[prop];
           return this.ref.current.removeAttribute(prop);
