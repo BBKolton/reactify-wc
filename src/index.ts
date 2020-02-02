@@ -15,6 +15,7 @@ const reactifyWebComponent = (WC: string) => {
     update() {
       this.clearEventHandlers();
       Object.entries(this.props).forEach(([prop, val]) => {
+        console.log({ prop, val });
         if (prop === "children") {
           return undefined;
         }
