@@ -44,20 +44,23 @@ with `/^on[A-Z]/` and `children` are set as props.
 
 ## Functions / Events
 
-Any `function` that has a property name that starts with `on[A-Z]` (any string
-that starts with 'o', 'n', and any uppercase letter) is truncated and the first
-char `toLowerCased` before passing to `addEventListener`. This effectively means
-`onClick` becomes a handler for the `click` event. This is to make things easy
-when handling most React synthetic events which typically have direct DOM
-companions by name. You can target kebab-cased custom events in the same way,
-like `onMy-kebab-event` -> `my-kebab-event`. `function` properties that do not
-start with `on[A-Z]` are added as props. Observe the example below:
+Any `function` that has a property name that starts with `on[A-Z]` or `on-[a-z]`
+is stripped of its prefix and added as an event listener. Examples:
+
+- `onMyEvent` -> `addEventListener("myEvent")`
+- `on-my-event` -> `addEventListener("my-event")`
+
+Note that in the case of `on[A-Z]`, the first letter is `toLowerCase`ed
 
 ```jsx
 const Example = () => (
   <VaadinButton onClick={handleClick}>Click</VaadinButton>
   // calls addEventListener('click', handleClick)
   // The 'on' prefix is truncated, and the next char lowercased
+
+  <VaadinButton on-my-event={handleMyEvent}>Click</VaadinButton>
+  // calls addEventListener('my-event', handleMyEvent)
+  // The 'on-' prefix is truncated
 
   <VaadinButton functionalProp={functionalProp}>Click</VaadinButton>
   // adds a prop 'functionalProp' -> functionalProp
