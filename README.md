@@ -103,7 +103,7 @@ const MyReactComponent = () => (
   <VaadinGrid items={items}>
     <vaadin-grid-column path="name.first" header="First name" />
     <vaadin-grid-column path="name.last" header="Last name" />
-  </vaadin-grid>
+  </VaadinGrid>
 );
 ```
 
