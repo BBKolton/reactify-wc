@@ -1,8 +1,8 @@
-import { RefObject, Component, createRef, createElement } from "react";
+import { RefObject, Component, createRef, createElement, ReactNode } from 'react';
 
-const reactifyWebComponent = (WC: string) => {
+const reactifyWebComponent = <Props>(WC: string) => {
   return class extends Component {
-    props: any;
+    props: Props & { children?: ReactNode };
     eventHandlers: [string, Function][];
     ref: RefObject<HTMLElement>;
 
