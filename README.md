@@ -71,6 +71,29 @@ const Example = () => (
 Events passed into the event handlers are browser events, not React
 SyntheticEvents.
 
+## Forcing props to be set as Properties
+
+Should you wish to override the default type heuristic and ensure a prop is set as
+a DOM property, you can pass an array of the prop names as the optional second parameter to `reactifyWC()`
+
+```jsx
+import React from "react";
+import reactifyWc from "reactify-wc";
+
+// Import your web component. This one defines a tag called 'my-element'
+import "my-element";
+
+const VaadinButton = reactifyWc("my-element", ["setMeAsAProp"]);
+
+export const MyReactComponent = () => (
+  <>
+    <h1>Hello world</h1>
+    <MyElement setMeAsAProp={"value"}>Click me!</MyElement>
+  </>
+);
+```
+
+
 # Composability Details
 
 Many web components are "composable," meaning that in order to get a desired

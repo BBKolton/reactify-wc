@@ -1,6 +1,6 @@
 import { RefObject, Component, createRef, createElement, ReactNode } from "react";
 
-const reactifyWebComponent = <Props>(WC: string) => {
+const reactifyWebComponent = <Props>(WC: string, alwaysSetProperty: string[] = []) => {
   return class extends Component {
     props: Props & { children?: ReactNode };
     eventHandlers: [string, Function][];
@@ -21,30 +21,32 @@ const reactifyWebComponent = <Props>(WC: string) => {
         if (prop.toLowerCase() === "classname") {
           return (this.ref.current.className = val as string);
         }
-        if (typeof val === "function" && prop.match(/^on[A-Z]/)) {
-          const event = prop[2].toLowerCase() + prop.substr(3);
-          this.eventHandlers.push([event, val]);
-          return this.ref.current.addEventListener(event, val as EventListener);
-        }
-        if (typeof val === "function" && prop.match(/^on\-[a-z]/)) {
-          const event = prop.substr(3);
-          this.eventHandlers.push([event, val]);
-          return this.ref.current.addEventListener(event, val as EventListener);
-        }
-        if (typeof val === "string" || typeof val === "number") {
-          this.ref.current[prop] = val;
-          return this.ref.current.setAttribute(prop, val as string);
-        }
-        if (typeof val === "boolean") {
-          if (val) {
-            this.ref.current[prop] = true;
-            return this.ref.current.setAttribute(
-              prop,
-              (val as unknown) as string
-            );
+        if(!alwaysSetProperty.includes(prop)) {
+          if (typeof val === "function" && prop.match(/^on[A-Z]/)) {
+            const event = prop[2].toLowerCase() + prop.substr(3);
+            this.eventHandlers.push([event, val]);
+            return this.ref.current.addEventListener(event, val as EventListener);
           }
-          delete this.ref.current[prop];
-          return this.ref.current.removeAttribute(prop);
+          if (typeof val === "function" && prop.match(/^on\-[a-z]/)) {
+            const event = prop.substr(3);
+            this.eventHandlers.push([event, val]);
+            return this.ref.current.addEventListener(event, val as EventListener);
+          }
+          if (typeof val === "string" || typeof val === "number") {
+            this.ref.current[prop] = val;
+            return this.ref.current.setAttribute(prop, val as string);
+          }
+          if (typeof val === "boolean") {
+            if (val) {
+              this.ref.current[prop] = true;
+              return this.ref.current.setAttribute(
+                prop,
+                (val as unknown) as string
+              );
+            }
+            delete this.ref.current[prop];
+            return this.ref.current.removeAttribute(prop);
+          }
         }
         this.ref.current[prop] = val;
         return undefined;
