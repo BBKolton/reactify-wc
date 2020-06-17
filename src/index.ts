@@ -1,8 +1,22 @@
-import { RefObject, Component, createRef, createElement } from "react";
+import {
+  RefObject,
+  Component,
+  createRef,
+  createElement,
+  ReactNode,
+} from "react";
+import { Options } from "./types";
 
-const reactifyWebComponent = (WC: string) => {
+const reactifyWebComponent = <Props>(
+  WC: string,
+  { forceProperty = [], forceAttribute = [], forceEvent = [] }: Options = {
+    forceProperty: [],
+    forceAttribute: [],
+    forceEvent: [],
+  }
+) => {
   return class extends Component {
-    props: any;
+    props: Props & { children?: ReactNode };
     eventHandlers: [string, Function][];
     ref: RefObject<HTMLElement>;
 
@@ -12,43 +26,66 @@ const reactifyWebComponent = (WC: string) => {
       this.ref = createRef<HTMLElement>();
     }
 
+    setProperty(prop: string, val: any) {
+      this.ref.current[prop] = val;
+    }
+
+    setAttribute(prop: string, val: string | boolean | number) {
+      if (val === false) return this.ref.current.removeAttribute(prop);
+      this.ref.current.setAttribute(prop, val.toString());
+    }
+
+    setEvent(event: string, val: Function) {
+      this.eventHandlers.push([event, val]);
+      this.ref.current.addEventListener(event, val as EventListener);
+    }
+
     update() {
       this.clearEventHandlers();
-      Object.entries(this.props).forEach(([prop, val]) => {
-        console.log({ prop, val });
+      Object.entries(this.props).forEach(([prop, val]: [string, any]) => {
+        // Check to see if we're forcing the value into a type, and don't
+        // proceed if we force
+        let forced: boolean = false;
+        if (forceProperty.includes(prop)) {
+          this.setProperty(prop, val);
+          forced = true;
+        }
+        if (forceAttribute.includes(prop)) {
+          this.setAttribute(prop, val);
+          forced = true;
+        }
+        if (forceEvent.includes(prop)) {
+          this.setEvent(prop, val);
+          forced = true;
+        }
+        if (forced) return;
+
+        // We haven't forced the type, so determine the correct typing and
+        // assign the value to the right place
         if (prop === "children") {
           return undefined;
         }
         if (prop.toLowerCase() === "classname") {
           return (this.ref.current.className = val as string);
         }
-        if (typeof val === "function" && prop.match(/^on[A-Z]/)) {
-          const event = prop[2].toLowerCase() + prop.substr(3);
-          this.eventHandlers.push([event, val]);
-          return this.ref.current.addEventListener(event, val as EventListener);
+        if (
+          typeof val === "string" ||
+          typeof val === "number" ||
+          typeof val === "boolean"
+        ) {
+          this.setProperty(prop, val);
+          this.setAttribute(prop, val);
+          return;
         }
-        if (typeof val === "function" && prop.match(/^on\-[a-z]/)) {
-          const event = prop.substr(3);
-          this.eventHandlers.push([event, val]);
-          return this.ref.current.addEventListener(event, val as EventListener);
-        }
-        if (typeof val === "string" || typeof val === "number") {
-          this.ref.current[prop] = val;
-          return this.ref.current.setAttribute(prop, val as string);
-        }
-        if (typeof val === "boolean") {
-          if (val) {
-            this.ref.current[prop] = true;
-            return this.ref.current.setAttribute(
-              prop,
-              (val as unknown) as string
-            );
+        if (typeof val === "function") {
+          if (prop.match(/^on[A-Z]/)) {
+            return this.setEvent(prop[2].toLowerCase() + prop.substr(3), val);
           }
-          delete this.ref.current[prop];
-          return this.ref.current.removeAttribute(prop);
+          if (prop.match(/^on\-[a-z]/)) {
+            return this.setEvent(prop.substr(3), val);
+          }
         }
-        this.ref.current[prop] = val;
-        return undefined;
+        this.setProperty(prop, val);
       });
     }
 

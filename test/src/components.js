@@ -92,5 +92,5 @@ export default {
   TextField,
   TimePicker,
   Upload,
-  UploadFile
+  UploadFile,
 };

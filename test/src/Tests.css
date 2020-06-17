@@ -5,6 +5,24 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #2c4250;
+
+  height: 100%;
+  width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+p {
+  margin: 0;
+  padding: 0;
+}
+
+i {
+  display: block;
 }
 
 code {
@@ -12,8 +30,27 @@ code {
     monospace;
 }
 
-body {
-  background-color: #7899b5;
+.wrapper {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  max-height: 100%;
+}
+
+.components {
+  padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.state {
+  background-color: #fff;
+  padding: 1.5rem 1rem;
+  max-height: 100%;
+  width: 14rem;
 }
 
 .row {
@@ -27,7 +64,12 @@ body {
 }
 
 .component {
-  margin: 2rem 1rem 0rem 1rem;
+  margin: 1rem;
   padding: 1rem;
   background-color: #fff;
+}
+
+.component,
+.state {
+  box-shadow: 0 0 0.5rem #000000;
 }
