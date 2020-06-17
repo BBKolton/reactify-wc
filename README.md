@@ -42,6 +42,10 @@ should go. `string`s, `number`s, and `boolean`s are set as attributes on the web
 component. All other data besides functions that have a property name that begin
 with `/^on[A-Z]/` and `children` are set as props.
 
+> Booleans are special! HTML specification states that if an attribute is
+> `false`, it should simply not appear. If you need a boolean to appear as a
+> property, check the [Forcing Types](#Forcing-Types) section.
+
 ## Functions / Events
 
 Any `function` that has a property name that starts with `on[A-Z]` or `on-[a-z]`
@@ -71,28 +75,52 @@ const Example = () => (
 Events passed into the event handlers are browser events, not React
 SyntheticEvents.
 
-## Forcing props to be set as Properties
+## From React to Web Components and Back Again
 
-Should you wish to override the default type heuristic and ensure a prop is set as
-a DOM property, you can pass an array of the prop names as the optional second parameter to `reactifyWC()`
+You can mix and match your reactified web components and React components:
+
+```jsx
+const WriteNames = ({ names }) => names.map((name) => <p>{name}</p>);
+const ReactifiedWc = reactifyWc("web-comp");
+
+const names = ["Bryce", "Brion", "Pia", "Fabian", "Larry"];
+
+const MyComponent = () => (
+  <ReactifiedWc>
+    <WriteNames names={names} />
+  </ReactifiedWc>
+);
+```
+
+## Forcing Types
+
+You can force any named property to be an event listener, property, attribute, or any
+combination of the three. This behavior is most useful for custom boolean
+behavior. For most cases, you will not need to force a type.
 
 ```jsx
 import React from "react";
 import reactifyWc from "reactify-wc";
 
 // Import your web component. This one defines a tag called 'my-element'
-import "my-element";
+import "@vaadin/vaadin-button";
 
-const VaadinButton = reactifyWc("my-element", ["setMeAsAProp"]);
+const VaadinButton = reactifyWc("my-element", {
+  forceProperty: ["setMeAsAProp"],
+  forceAttribute: ["setMeAsAnAttribute"],
+  forceEvent: ["setMeAsAnEventListener"],
+});
 
 export const MyReactComponent = () => (
-  <>
-    <h1>Hello world</h1>
-    <MyElement setMeAsAProp={"value"}>Click me!</MyElement>
-  </>
+  <VaadinButton
+    setMeAsAProp="value"
+    setMeAsAnAttribute={[]}
+    setMeAsAnEventListener={() => {}}
+  >
+    Click me!
+  </VaadinButton>
 );
 ```
-
 
 # Composability Details
 
@@ -144,21 +172,16 @@ const MyReactComponent = () => (
 );
 ```
 
-## From React to Web Components and Back Again
+# Testing and Examples
 
-You can mix and match your reactified web components and React components:
+There is now a small test page filled with example web components and basic
+tests, available in the test folder. View the tests cloning the repo and
+running:
 
-```jsx
-const WriteNames = ({ names }) => names.map(name => <p>{name}</p>);
-const ReactifiedWc = reactifyWc("web-comp");
-
-const names = ["Bryce", "Brion", "Pia", "Fabian"];
-
-const MyComponent = () => (
-  <ReactifiedWc>
-    <WriteNames names={names} />
-  </ReactifiedWc>
-);
+```bash
+cd tests;
+npm install;
+npm start;
 ```
 
 # Contribute
@@ -168,9 +191,11 @@ no official contribution guide yet.
 
 # Roadmap
 
-1. Add testing suite with Cypress.
+1. Add Cypress to testing suite.
 2. Do some deep comparison between the changing props, attributes, and especially
-   event handlers so that we aren't setting and removing them on every `componentDidUpdate`.
+   event handlers so that we aren't setting and removing them on every
+   `componentDidUpdate`.
+3. Add CI/CD pipeline to GitHub.
 
 # Credits
 

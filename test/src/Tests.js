@@ -21,6 +21,9 @@ const NumberTest = reactify("number-test");
 const PropertyTest = reactify("property-test");
 const ChildrenTest = reactify("children-test");
 const EventTest = reactify("event-test");
+const EventTestForceEvent = reactify("event-test", {
+  forceEvent: ["thing"],
+});
 
 class Tests extends PureComponent {
   constructor() {
@@ -134,14 +137,23 @@ class Tests extends PureComponent {
               <i>
                 with <code>onThing</code>
               </i>
-              <EventTest onThing={({ detail }) => alert(detail)}></EventTest>
+              <EventTest onThing={({ detail }) => alert(detail)} />
             </div>
             <div className="component">
               <h3>Event Test</h3>
               <i>
                 with <code>on-thing</code>
               </i>
-              <EventTest on-thing={({ detail }) => alert(detail)}></EventTest>
+              <EventTest on-thing={({ detail }) => alert(detail)} />
+            </div>
+          </div>
+          <div className="row">
+            <div className="component">
+              <h3>Event Test</h3>
+              <i>
+                forced event with <code>thing</code>
+              </i>
+              <EventTestForceEvent thing={({ detail }) => alert(detail)} />
             </div>
           </div>
           <div className="component">
