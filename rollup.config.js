@@ -7,16 +7,16 @@ export default {
   input: "src/index.ts",
   output: [
     { file: pkg.main, format: "cjs" },
-    { file: pkg.module, format: "es" }
+    { file: pkg.module, format: "es" },
   ],
   external: [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.devDependencies || {}),
-    ...Object.keys(pkg.peerDependencies || {})
+    ...Object.keys(pkg.peerDependencies || {}),
   ],
   plugins: [
     ts({
-      typescript: require("typescript")
+      typescript: require("typescript"),
     }),
     cjs({
       include: ["node_modules/**"],
@@ -27,11 +27,11 @@ export default {
           "Component",
           "PropTypes",
           "createElement",
-          "createRef"
+          "createRef",
         ],
-        "node_modules/react-dom/index.js": ["render"]
-      }
+        "node_modules/react-dom/index.js": ["render"],
+      },
     }),
-    terser()
-  ]
+    terser(),
+  ],
 };
