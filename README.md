@@ -179,7 +179,7 @@ tests, available in the test folder. View the tests cloning the repo and
 running:
 
 ```bash
-cd tests;
+cd test;
 npm install;
 npm start;
 ```
