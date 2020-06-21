@@ -16,7 +16,7 @@ const reactifyWebComponent = <Props>(
   }
 ) => {
   return class extends Component {
-    props: Props & { children?: ReactNode };
+    props: Props & { style?: Object; children?: ReactNode };
     eventHandlers: [string, Function][];
     ref: RefObject<HTMLElement>;
 
@@ -59,7 +59,7 @@ const reactifyWebComponent = <Props>(
           forced = true;
         }
         if (forced) return;
-
+        if (prop === "style") return;
         // We haven't forced the type, so determine the correct typing and
         // assign the value to the right place
         if (prop === "children") {
@@ -109,8 +109,8 @@ const reactifyWebComponent = <Props>(
     }
 
     render() {
-      const { children } = this.props;
-      return createElement(WC, { ref: this.ref }, children);
+      const { children, style } = this.props;
+      return createElement(WC, { ref: this.ref, style }, children);
     }
   };
 };

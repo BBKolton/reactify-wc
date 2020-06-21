@@ -11,6 +11,7 @@ import "./webComponents/NumberTest";
 import "./webComponents/PropertyTest";
 import "./webComponents/ChildrenTest";
 import "./webComponents/EventTest";
+import "./webComponents/StyleTest";
 
 const StringTest = reactify("string-test");
 const BooleanTest = reactify("boolean-test");
@@ -24,6 +25,7 @@ const EventTest = reactify("event-test");
 const EventTestForceEvent = reactify("event-test", {
   forceEvent: ["thing"],
 });
+const StyleTest = reactify("style-test");
 
 class Tests extends PureComponent {
   constructor() {
@@ -129,6 +131,12 @@ class Tests extends PureComponent {
               >
                 Toggle Child!
               </Button>
+            </div>
+          </div>
+          <div className="row">
+            <div className="component">
+              <h3>Style Test</h3>
+              <StyleTest style={{ color: "red" }}>Text has red color</StyleTest>
             </div>
           </div>
           <div className="row">
