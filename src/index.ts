@@ -4,6 +4,7 @@ import {
   createRef,
   createElement,
   ReactNode,
+  forwardRef,
 } from "react";
 import { Options } from "./types";
 
@@ -15,15 +16,19 @@ const reactifyWebComponent = <Props>(
     forceEvent: [],
   }
 ) => {
-  return class extends Component {
-    props: Props & { style?: Object; children?: ReactNode };
+  class Reactified extends Component {
+    props: Props & {
+      innerRef?: RefObject<HTMLElement>;
+      style?: Object;
+      children?: ReactNode;
+    };
     eventHandlers: [string, Function][];
     ref: RefObject<HTMLElement>;
 
     constructor(props) {
       super(props);
       this.eventHandlers = [];
-      this.ref = createRef<HTMLElement>();
+      this.ref = this.props.innerRef || createRef<HTMLElement>();
     }
 
     setProperty(prop: string, val: any) {
@@ -112,7 +117,11 @@ const reactifyWebComponent = <Props>(
       const { children, style } = this.props;
       return createElement(WC, { ref: this.ref, style }, children);
     }
-  };
+  }
+
+  return forwardRef(({ children, ...props }, ref) =>
+    createElement(Reactified, { innerRef: ref, ...props }, children)
+  );
 };
 
 export default reactifyWebComponent;

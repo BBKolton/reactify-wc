@@ -12,6 +12,7 @@ import "./webComponents/PropertyTest";
 import "./webComponents/ChildrenTest";
 import "./webComponents/EventTest";
 import "./webComponents/StyleTest";
+import "./webComponents/RefTest";
 
 const StringTest = reactify("string-test");
 const BooleanTest = reactify("boolean-test");
@@ -26,11 +27,14 @@ const EventTestForceEvent = reactify("event-test", {
   forceEvent: ["thing"],
 });
 const StyleTest = reactify("style-test");
+const RefTest = reactify("ref-test");
 
 class Tests extends PureComponent {
   constructor() {
     super();
+    this.ref = React.createRef(null);
     this.state = {
+      ref: null,
       string: "Bryce",
       boolean: true,
       number: 123,
@@ -137,6 +141,20 @@ class Tests extends PureComponent {
             <div className="component">
               <h3>Style Test</h3>
               <StyleTest style={{ color: "red" }}>Text has red color</StyleTest>
+            </div>
+            <div className="component">
+              <h3>Ref Test</h3>
+              <RefTest ref={this.ref}></RefTest>
+              <p>Check that ref.current.tagName is REF-TEST</p>
+              <Button
+                onClick={() => {
+                  this.setState({
+                    ref: this.ref.current.tagName,
+                  });
+                }}
+              >
+                Check ref!
+              </Button>
             </div>
           </div>
           <div className="row">
