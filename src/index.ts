@@ -5,16 +5,22 @@ import {
   createElement,
   ReactNode,
 } from "react";
+import { registerElement } from "./registerElement"
 import { Options } from "./types";
 
 const reactifyWebComponent = <Props>(
   WC: string,
-  { forceProperty = [], forceAttribute = [], forceEvent = [] }: Options = {
+  { forceProperty = [], forceAttribute = [], forceEvent = [], klass = null }: Options = {
     forceProperty: [],
     forceAttribute: [],
     forceEvent: [],
+    klass: null
   }
 ) => {
+  let tagName = WC
+  if (klass) {
+    tagName = registerElement(tagName, klass);
+  }
   return class extends Component {
     props: Props & { children?: ReactNode };
     eventHandlers: [string, Function][];
@@ -110,7 +116,7 @@ const reactifyWebComponent = <Props>(
 
     render() {
       const { children } = this.props;
-      return createElement(WC, { ref: this.ref }, children);
+      return createElement(tagName, { ref: this.ref }, children);
     }
   };
 };
