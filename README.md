@@ -122,6 +122,25 @@ export const MyReactComponent = () => (
 );
 ```
 
+## Styling
+
+Feel free to use React's `style` attribute (or other packages like Styled
+Components) to style your content. The example below will make the button text
+color red.
+
+```jsx
+const VaadinButton = reactify("vaadin-button");
+
+export const MyReactComponent = () => (
+  <VaadinButton onClick={onClick} style={{ color: "red" }}>
+    Click me!
+  </VaadinButton>
+);
+```
+
+> Remember that some web components are in shadow DOMs and are _not_ stylable
+> from the outside. Content injected as children is always stylable.
+
 # Composability Details
 
 Many web components are "composable," meaning that in order to get a desired
