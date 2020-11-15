@@ -1,14 +1,24 @@
 import {
   RefObject,
-  Component,
   createRef,
   createElement,
-  ReactNode,
   forwardRef,
-} from "react";
-import { Options } from "./types";
+  CSSProperties,
+  useEffect,
+  FunctionComponent,
+} from 'react';
 
-const reactifyWebComponent = <Props>(
+interface Options {
+  forceProperty: string[];
+  forceAttribute: string[];
+  forceEvent: string[];
+}
+type PropKey = keyof HTMLElement | string;
+
+const REFERENCE_ERR_MESSAGE =
+  'Reference component not defined. Operation cannot be done';
+
+const reactifyWebComponent = <Props,>(
   WC: string,
   { forceProperty = [], forceAttribute = [], forceEvent = [] }: Options = {
     forceProperty: [],
@@ -16,111 +26,125 @@ const reactifyWebComponent = <Props>(
     forceEvent: [],
   }
 ) => {
-  class Reactified extends Component {
-    props: Props & {
-      innerRef?: RefObject<HTMLElement>;
-      style?: Object;
-      children?: ReactNode;
+  type CombinedProps = Props & {
+    innerRef?: RefObject<HTMLElement>;
+    style?: CSSProperties;
+  };
+
+  const Reactified: FunctionComponent<CombinedProps> = (props) => {
+    const { innerRef, children, style } = props;
+    const ref = innerRef || createRef<HTMLElement>();
+    const eventHandlers: [string, Function][] = [];
+
+    useEffect(() => {
+      console.log("HAPPEN")
+      update();
+      return () => clearEventHandlers();
+    }, [props]);
+    
+    const setProperty = (prop: PropKey, val: any) => {
+      if (ref.current) {
+        ref.current.setAttribute(prop, val);
+      } else {
+        console.warn(REFERENCE_ERR_MESSAGE);
+      }
     };
-    eventHandlers: [string, Function][];
-    ref: RefObject<HTMLElement>;
 
-    constructor(props) {
-      super(props);
-      this.eventHandlers = [];
-      this.ref = this.props.innerRef || createRef<HTMLElement>();
-    }
+    const setAttribute = (prop: PropKey, val: string | boolean | number) => {
+      if (ref.current) {
+        if (val === false) {
+          return ref.current.removeAttribute(prop);
+        }
+        ref.current.setAttribute(prop, val.toString());
+      } else {
+        console.warn(REFERENCE_ERR_MESSAGE);
+      }
+    };
 
-    setProperty(prop: string, val: any) {
-      this.ref.current[prop] = val;
-    }
+    const setEvent = (event: string, val: Function) => {
+      if (ref.current) {
+        eventHandlers.push([event, val]);
+        ref.current.addEventListener(event, val as EventListener);
+      } else {
+        console.warn(REFERENCE_ERR_MESSAGE);
+      }
+    };
 
-    setAttribute(prop: string, val: string | boolean | number) {
-      if (val === false) return this.ref.current.removeAttribute(prop);
-      this.ref.current.setAttribute(prop, val.toString());
-    }
-
-    setEvent(event: string, val: Function) {
-      this.eventHandlers.push([event, val]);
-      this.ref.current.addEventListener(event, val as EventListener);
-    }
-
-    update() {
-      this.clearEventHandlers();
-      Object.entries(this.props).forEach(([prop, val]: [string, any]) => {
+    const update = () => {
+      clearEventHandlers();
+      Object.entries(props).forEach(([prop, val]: [PropKey, any]) => {
         // Check to see if we're forcing the value into a type, and don't
         // proceed if we force
         let forced: boolean = false;
         if (forceProperty.includes(prop)) {
-          this.setProperty(prop, val);
+          setProperty(prop, val);
           forced = true;
         }
         if (forceAttribute.includes(prop)) {
-          this.setAttribute(prop, val);
+          setAttribute(prop, val);
           forced = true;
         }
         if (forceEvent.includes(prop)) {
-          this.setEvent(prop, val);
+          setEvent(prop, val);
           forced = true;
         }
         if (forced) return;
-        if (prop === "style") return;
+        if (prop === 'style') return;
         // We haven't forced the type, so determine the correct typing and
         // assign the value to the right place
-        if (prop === "children") {
+        if (prop === 'children') {
           return undefined;
         }
-        if (prop.toLowerCase() === "classname") {
-          return (this.ref.current.className = val as string);
-        }
-        if (
-          typeof val === "string" ||
-          typeof val === "number" ||
-          typeof val === "boolean"
-        ) {
-          this.setProperty(prop, val);
-          this.setAttribute(prop, val);
+        if (prop.toLowerCase() === 'classname') {
+          if (ref.current) {
+            ref.current.className = val.toString();
+          } else {
+            console.warn(REFERENCE_ERR_MESSAGE);
+          }
           return;
         }
-        if (typeof val === "function") {
+        if (
+          typeof val === 'string' ||
+          typeof val === 'number' ||
+          typeof val === 'boolean'
+        ) {
+          setProperty(prop, val);
+          setAttribute(prop, val);
+          return;
+        }
+        if (typeof val === 'function') {
           if (prop.match(/^on[A-Z]/)) {
-            return this.setEvent(prop[2].toLowerCase() + prop.substr(3), val);
+            return setEvent(prop[2].toLowerCase() + prop.substr(3), val);
           }
           if (prop.match(/^on\-[a-z]/)) {
-            return this.setEvent(prop.substr(3), val);
+            return setEvent(prop.substr(3), val);
           }
         }
-        this.setProperty(prop, val);
+        setProperty(prop, val);
       });
-    }
+    };
 
-    componentDidUpdate() {
-      this.update();
-    }
+    const clearEventHandlers = () => {
+      if (ref.current) {
+        eventHandlers.forEach(([event, handler]) => {
+          ref.current && ref.current.removeEventListener(event, handler as EventListener);
+        });
+        // make "eventHandlers" constant array empty: https://stackoverflow.com/questions/1232040/how-do-i-empty-an-array-in-javascript
+        eventHandlers.length = 0;
+      } else {
+        console.warn(REFERENCE_ERR_MESSAGE);
+      }
+    };
 
-    componentDidMount() {
-      this.update();
-    }
+    return createElement(WC, { ref: ref, style }, children);
+  };
 
-    componentWillUnmount() {
-      this.clearEventHandlers();
-    }
-
-    clearEventHandlers() {
-      this.eventHandlers.forEach(([event, handler]) => {
-        this.ref.current.removeEventListener(event, handler as EventListener);
-      });
-      this.eventHandlers = [];
-    }
-
-    render() {
-      const { children, style } = this.props;
-      return createElement(WC, { ref: this.ref, style }, children);
-    }
-  }
-
-  return forwardRef(({ children, ...props }, ref) =>
-    createElement(Reactified, { innerRef: ref, ...props }, children)
+  return forwardRef<any, Props>(({ children, ...props }, ref) =>
+    createElement(
+      Reactified,
+      { innerRef: ref, ...props } as CombinedProps,
+      children
+    )
   );
 };
 

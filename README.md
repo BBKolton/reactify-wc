@@ -4,7 +4,9 @@ _A Mercedes-Benz R&D North America, Seattle HUB contribution_
 
 Use web components with React properties and functions
 
-# Usage
+## Usage
+
+### JavaScript
 
 ```jsx
 import React from "react";
@@ -25,17 +27,44 @@ export const MyReactComponent = () => (
 );
 ```
 
-# Children, Props, Attributes, Functions, and Events
+### TypeScript
+
+```tsx
+import React from "react";
+import reactifyWc from "reactify-wc";
+
+// Import your web component. This one defines a tag called 'vaadin-button'
+import "@vaadin/vaadin-button";
+
+interface VaadinButtonProps extends React.HTMLProps<HTMLButtonElement> {
+  customProp: string;
+}
+
+const onClick = () => console.log("hello world");
+
+const VaadinButton = reactifyWc<VaadinButtonProps>("vaadin-button");
+
+export const MyReactComponent: React.FunctionComponent = () => (
+  <>
+    <h1>Hello world</h1>
+    <VaadinButton onClick={onClick} customProp="TEST">
+      Click me!
+    </VaadinButton>
+  </>
+);
+```
+
+## Children, Props, Attributes, Functions, and Events
 
 React does not handle properties and functions correctly for web components.
 This factory function returns a new React component for a given web component so
 you can use them.
 
-## Children
+### Children
 
 Children are dropped directly into the web component like normal.
 
-## Properties and Attributes
+### Properties and Attributes
 
 `reactify-wc` checks the passed properties by type to determine where they
 should go. `string`s, `number`s, and `boolean`s are set as attributes on the web
@@ -46,7 +75,7 @@ with `/^on[A-Z]/` and `children` are set as props.
 > `false`, it should simply not appear. If you need a boolean to appear as a
 > property, check the [Forcing Types](#Forcing-Types) section.
 
-## Functions / Events
+### Functions / Events
 
 Any `function` that has a property name that starts with `on[A-Z]` or `on-[a-z]`
 is stripped of its prefix and added as an event listener. Examples:
@@ -141,7 +170,7 @@ export const MyReactComponent = () => (
 > Remember that some web components are in shadow DOMs and are _not_ stylable
 > from the outside. Content injected as children is always stylable.
 
-# Composability Details
+## Composability Details
 
 Many web components are "composable," meaning that in order to get a desired
 functionality, you may need to put multiple tags together or inside one another.
@@ -191,7 +220,7 @@ const MyReactComponent = () => (
 );
 ```
 
-# Testing and Examples
+## Testing and Examples
 
 There is now a small test page filled with example web components and basic
 tests, available in the test folder. View the tests cloning the repo and
@@ -203,12 +232,12 @@ npm install;
 npm start;
 ```
 
-# Contribute
+## Contribute
 
 Contribute to the project in our git repo by opening a PR with changes. We have
 no official contribution guide yet.
 
-# Roadmap
+## Roadmap
 
 1. Add Cypress to testing suite.
 2. Do some deep comparison between the changing props, attributes, and especially
@@ -216,7 +245,7 @@ no official contribution guide yet.
    `componentDidUpdate`.
 3. Add CI/CD pipeline to GitHub.
 
-# Credits
+## Credits
 
 This software was created in-house at
 Mercedes-Benz Research & Development North America, Seattle HUB. This software is provided
