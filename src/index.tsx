@@ -5,7 +5,7 @@ import React, {
   CSSProperties,
   useEffect,
   FunctionComponent,
-  PropsWithoutRef
+  PropsWithoutRef,
 } from 'react';
 
 interface Options {
@@ -29,6 +29,7 @@ const reactifyWebComponent = <Props,>(
   type CombinedProps = Props & {
     innerRef?: RefObject<HTMLElement>;
     style?: CSSProperties;
+    src?: string;
   };
 
   const Reactified: FunctionComponent<CombinedProps> = (props) => {
@@ -136,10 +137,19 @@ const reactifyWebComponent = <Props,>(
       }
     };
 
-    return <WC {...({ ref, ...props } as React.ComponentProps<any> & Props)} />;
+    return (
+      <WC
+        {...({
+          ref,
+          style: props.style,
+          children: props.children,
+          src: props.src,
+        } as React.ComponentProps<any> & Props)}
+      />
+    );
   };
 
-  return forwardRef<any, PropsWithoutRef<Props>>(({ ...props }, ref) => (
+  return forwardRef<any, PropsWithoutRef<Props>>((props, ref) => (
     <Reactified {...({ innerRef: ref, ...props } as CombinedProps)} />
   ));
 };
