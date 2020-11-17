@@ -33,7 +33,7 @@ const reactifyWebComponent = <Props,>(
   };
 
   const Reactified: FunctionComponent<CombinedProps> = (props) => {
-    const { innerRef } = props;
+    const { innerRef, children, src, style } = props;
     const ref = innerRef || createRef<HTMLElement>();
     const eventHandlers: [string, Function][] = [];
 
@@ -141,9 +141,9 @@ const reactifyWebComponent = <Props,>(
       <WC
         {...({
           ref,
-          style: props.style,
-          children: props.children,
-          src: props.src,
+          style,
+          children,
+          src,
         } as React.ComponentProps<any> & Props)}
       />
     );
