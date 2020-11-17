@@ -1,17 +1,17 @@
-import {
+import React, {
   RefObject,
   createRef,
-  createElement,
   forwardRef,
   CSSProperties,
   useEffect,
   FunctionComponent,
+  PropsWithoutRef
 } from 'react';
 
 interface Options {
-  forceProperty: string[];
-  forceAttribute: string[];
-  forceEvent: string[];
+  forceProperty?: string[];
+  forceAttribute?: string[];
+  forceEvent?: string[];
 }
 type PropKey = keyof HTMLElement | string;
 
@@ -32,16 +32,15 @@ const reactifyWebComponent = <Props,>(
   };
 
   const Reactified: FunctionComponent<CombinedProps> = (props) => {
-    const { innerRef, children, style } = props;
+    const { innerRef } = props;
     const ref = innerRef || createRef<HTMLElement>();
     const eventHandlers: [string, Function][] = [];
 
     useEffect(() => {
-      console.log("HAPPEN")
       update();
       return () => clearEventHandlers();
     }, [props]);
-    
+
     const setProperty = (prop: PropKey, val: any) => {
       if (ref.current) {
         ref.current.setAttribute(prop, val);
@@ -127,7 +126,8 @@ const reactifyWebComponent = <Props,>(
     const clearEventHandlers = () => {
       if (ref.current) {
         eventHandlers.forEach(([event, handler]) => {
-          ref.current && ref.current.removeEventListener(event, handler as EventListener);
+          ref.current &&
+            ref.current.removeEventListener(event, handler as EventListener);
         });
         // make "eventHandlers" constant array empty: https://stackoverflow.com/questions/1232040/how-do-i-empty-an-array-in-javascript
         eventHandlers.length = 0;
@@ -136,16 +136,12 @@ const reactifyWebComponent = <Props,>(
       }
     };
 
-    return createElement(WC, { ref: ref, style }, children);
+    return <WC {...({ ref, ...props } as React.ComponentProps<any> & Props)} />;
   };
 
-  return forwardRef<any, Props>(({ children, ...props }, ref) =>
-    createElement(
-      Reactified,
-      { innerRef: ref, ...props } as CombinedProps,
-      children
-    )
-  );
+  return forwardRef<any, PropsWithoutRef<Props>>(({ ...props }, ref) => (
+    <Reactified {...({ innerRef: ref, ...props } as CombinedProps)} />
+  ));
 };
 
 export default reactifyWebComponent;
