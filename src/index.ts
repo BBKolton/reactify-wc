@@ -3,8 +3,8 @@ import {
   Component,
   createRef,
   createElement,
-  ReactNode,
   forwardRef,
+  PropsWithChildren,
 } from "react";
 import { Options } from "./types";
 
@@ -17,10 +17,9 @@ const reactifyWebComponent = <Props>(
   }
 ) => {
   class Reactified extends Component {
-    props: Props & {
+    props: PropsWithChildren<Props> & {
       innerRef?: RefObject<HTMLElement>;
       style?: Object;
-      children?: ReactNode;
     };
     eventHandlers: [string, Function][];
     ref: RefObject<HTMLElement>;
@@ -119,7 +118,8 @@ const reactifyWebComponent = <Props>(
     }
   }
 
-  return forwardRef(({ children, ...props }, ref) =>
+  return forwardRef<{innerRef?: RefObject<HTMLElement>}, PropsWithChildren<Props> & {style?: Object}>
+  (({ children, ...props }, ref) =>
     createElement(Reactified, { innerRef: ref, ...props }, children)
   );
 };
