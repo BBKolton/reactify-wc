@@ -9,7 +9,7 @@
     "@vaadin/vaadin": "^14.1.16",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
-    "react-scripts": "^3.4.0",
+    "react-scripts": "^5.0.1",
     "reactify-wc": "file:./.."
   },
   "scripts": {
